@@ -1,5 +1,6 @@
 import { Product } from "../../domain/entities";
 import { ProductOperations } from "../../domain/use-cases";
+import { ProductNotFound } from "../errors";
 import { ProductRepository } from "../protocols/database/product-repository";
 
 export class ProductOperationsImpl implements ProductOperations {
@@ -14,25 +15,42 @@ export class ProductOperationsImpl implements ProductOperations {
 
     await this.repository.create(product);
   }
-  async retrieveOne(id: number | undefined): Promise<Product | null> {
-    throw new Error("not impl");
+
+  async retrieveOne(id: number): Promise<Product | undefined> {
+    return await this.repository.byId(id);
   }
+
   async retrieveList(): Promise<Product[]> {
-    throw new Error("not impl");
+    return await this.repository.findAll();
   }
-  async update(
-    id: number | undefined,
-    data: Omit<Product, "id">,
-  ): Promise<void> {
-    throw new Error("not impl");
+
+  async update(id: number, data: Product): Promise<void> {
+    const exists = await this.repository.byId(id);
+
+    if (!exists) {
+      throw new ProductNotFound(id);
+    }
+
+    return await this.repository.update(id, data);
   }
-  async updatePartially(
-    id: number | undefined,
-    data: Partial<Omit<Product, "id">>,
-  ): Promise<void> {
-    throw new Error("not impl");
+
+  async updatePartially(id: number, data: Partial<Product>): Promise<void> {
+    const exists = await this.repository.byId(id);
+
+    if (!exists) {
+      throw new ProductNotFound(id);
+    }
+
+    return await this.repository.updatePartially(id, data);
   }
-  async delete(id: number | undefined): Promise<void> {
-    throw new Error("not impl");
+
+  async delete(id: number): Promise<void> {
+    const exists = await this.repository.byId(id);
+
+    if (!exists) {
+      throw new ProductNotFound(id);
+    }
+
+    return await this.repository.delete(id);
   }
 }
