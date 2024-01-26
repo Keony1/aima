@@ -1,22 +1,34 @@
 import { Product } from "../../domain/entities";
 import { ProductOperations } from "../../domain/use-cases";
-import { ProductNotFound } from "../errors";
+import {
+  ProductExistsError,
+  ProductNotFound,
+  SupplierNotFound,
+} from "../errors";
 import { ProductRepository } from "../protocols/database/product-repository";
+import { SupplierRepository } from "../protocols/database/supplier-repository";
 
 export class ProductOperationsImpl implements ProductOperations {
-  constructor(private readonly repository: ProductRepository) {}
+  constructor(
+    private readonly repository: ProductRepository,
+    private readonly supplierRepository: SupplierRepository,
+  ) {}
 
-  async create(product: Product): Promise<void> {
-    const exists = await this.repository.byName(product.name);
-
-    if (exists) {
-      throw new Error(`Product exists with id ${exists.id}`);
+  async create(product: Product): Promise<Product> {
+    const productExists = await this.repository.byName(product.name);
+    if (productExists) {
+      throw new ProductExistsError(productExists.name);
     }
 
-    await this.repository.create(product);
+    const supplier = await this.supplierRepository.byId(product.supplierId);
+    if (!supplier) {
+      throw new SupplierNotFound(product.supplierId);
+    }
+
+    return await this.repository.create(product);
   }
 
-  async retrieveOne(id: number): Promise<Product | undefined> {
+  async retrieveOne(id: number): Promise<Product | null> {
     return await this.repository.byId(id);
   }
 
@@ -26,9 +38,13 @@ export class ProductOperationsImpl implements ProductOperations {
 
   async update(id: number, data: Product): Promise<void> {
     const exists = await this.repository.byId(id);
-
     if (!exists) {
       throw new ProductNotFound(id);
+    }
+
+    const supplier = await this.supplierRepository.byId(data.supplierId);
+    if (!supplier) {
+      throw new SupplierNotFound(data.supplierId);
     }
 
     return await this.repository.update(id, data);
@@ -36,9 +52,15 @@ export class ProductOperationsImpl implements ProductOperations {
 
   async updatePartially(id: number, data: Partial<Product>): Promise<void> {
     const exists = await this.repository.byId(id);
-
     if (!exists) {
       throw new ProductNotFound(id);
+    }
+
+    if (data.supplierId) {
+      const supplier = await this.supplierRepository.byId(data.supplierId);
+      if (!supplier) {
+        throw new SupplierNotFound(data.supplierId);
+      }
     }
 
     return await this.repository.updatePartially(id, data);
