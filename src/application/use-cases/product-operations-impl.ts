@@ -4,14 +4,17 @@ import {
   ProductExistsError,
   ProductNotFound,
   SupplierNotFound,
+  ProductWithSales,
 } from "../errors";
 import { ProductRepository } from "../protocols/database/product-repository";
+import { SaleRepository } from "../protocols/database/sale-repository";
 import { SupplierRepository } from "../protocols/database/supplier-repository";
 
 export class ProductOperationsImpl implements ProductOperations {
   constructor(
     private readonly repository: ProductRepository,
     private readonly supplierRepository: SupplierRepository,
+    private readonly saleRepository: SaleRepository,
   ) {}
 
   async create(product: Product): Promise<Product> {
@@ -71,6 +74,11 @@ export class ProductOperationsImpl implements ProductOperations {
 
     if (!exists) {
       throw new ProductNotFound(id);
+    }
+
+    const sales = await this.saleRepository.byProduct(id);
+    if (sales.length > 0) {
+      throw new ProductWithSales(id);
     }
 
     return await this.repository.delete(id);
