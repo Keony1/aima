@@ -1,9 +1,17 @@
-import express, { json } from "express";
+import express, { json, Express } from "express";
 import { productRouter } from "../routes/product-routes";
+import { reportRouter } from "../routes/report-routes";
+import { DataSource } from "typeorm";
 
-const app = express();
+function createApp(dataSource: DataSource): Express {
+  const router = express.Router();
+  router.use(productRouter(dataSource));
+  router.use(reportRouter(dataSource));
 
-app.use(json());
-app.use("/api", productRouter);
+  const app = express();
+  app.use(json());
+  app.use("/api", router);
+  return app;
+}
 
-export { app };
+export { createApp };

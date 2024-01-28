@@ -1,8 +1,11 @@
-import { TypeOrmDataSource } from "../infra/typeorm/typeorm-datasource";
+import { TypeOrmConnection } from "../infra/typeorm/typeorm-connection";
 
-TypeOrmDataSource.initialize()
-  .then(async () => {
-    const { app } = await import("./config/app");
+TypeOrmConnection.getInstance()
+  .getDataSource()
+  .initialize()
+  .then(async (ds) => {
+    const { createApp } = await import("./config/app");
+    const app = createApp(ds);
     app.listen(3000, () =>
       console.log(`Server running at http://localhost:3000`),
     );
