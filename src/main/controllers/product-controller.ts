@@ -38,10 +38,15 @@ export class ProductController {
   }
 
   async getAll(req: Request, res: Response) {
-    const products = await this.ops.retrieveList();
-    return res.status(200).json({
-      data: products,
-    });
+    try {
+      const products = await this.ops.retrieveList();
+      return res.status(200).json({
+        data: products,
+      });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
   }
 
   async getOne(req: Request, res: Response) {
