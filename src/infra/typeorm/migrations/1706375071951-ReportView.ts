@@ -51,37 +51,11 @@ export class ReportView1706375071951 implements MigrationInterface {
       LEFT JOIN
         average_monthly_sales ams ON p.id = ams.product_id;
     `);
-
-    // trigger
-    await queryRunner.query(`
-      CREATE OR REPLACE FUNCTION refresh_product_report_view_mv()
-      RETURNS TRIGGER AS $$
-      BEGIN
-          REFRESH MATERIALIZED VIEW product_report_view;
-          RETURN NULL;
-      END;
-      $$ LANGUAGE plpgsql;
-
-      CREATE TRIGGER refresh_product_report_view_mv
-      AFTER INSERT OR UPDATE OR DELETE ON products
-      FOR EACH STATEMENT
-      EXECUTE FUNCTION refresh_product_report_view_mv();
-
-      CREATE TRIGGER refresh_product_report_view_mv
-      AFTER INSERT OR UPDATE OR DELETE ON sales
-      FOR EACH STATEMENT
-      EXECUTE FUNCTION refresh_product_report_view_mv();
-    `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
       DROP MATERIALIZED VIEW IF EXISTS product_report_view;
-    `);
-
-    await queryRunner.query(`
-      DROP TRIGGER IF EXISTS refresh_product_report_view_mv ON products;
-      DROP TRIGGER IF EXISTS refresh_product_report_view_mv ON sales;
     `);
   }
 }
