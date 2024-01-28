@@ -1,6 +1,6 @@
-import { ReportRepository } from "../../../src/application/protocols/database/report-repository";
-import { ReportImpl } from "../../../src/application/use-cases/report-impl";
-import { RestockingNeeds } from "../../../src/domain/entities";
+import { ReportRepository } from "../../../../src/application/protocols/database/report-repository";
+import { ReportImpl } from "../../../../src/application/use-cases/report-impl";
+import { RestockingNeeds } from "../../../../src/domain/entities";
 
 const repository: jest.Mocked<ReportRepository> = {
   summary: jest.fn(),

@@ -1,12 +1,12 @@
-import { ProductOperationsImpl } from "../../../src/application/use-cases/product-operations-impl";
-import { ProductRepository } from "../../../src/application/protocols/database/product-repository";
-import { Product } from "../../../src/domain/entities";
+import { ProductOperationsImpl } from "../../../../src/application/use-cases/product-operations-impl";
+import { ProductRepository } from "../../../../src/application/protocols/database/product-repository";
+import { Product } from "../../../../src/domain/entities";
 import {
   ProductNotFound,
   ProductWithSales,
-} from "../../../src/application/errors";
-import { SupplierRepository } from "../../../src/application/protocols/database/supplier-repository";
-import { SaleRepository } from "../../../src/application/protocols/database";
+} from "../../../../src/application/errors";
+import { SupplierRepository } from "../../../../src/application/protocols/database/supplier-repository";
+import { SaleRepository } from "../../../../src/application/protocols/database";
 
 const spyRepository: jest.Mocked<ProductRepository> = {
   create: jest.fn(),
