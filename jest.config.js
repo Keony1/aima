@@ -3,4 +3,5 @@ module.exports = {
   testEnvironment: "node",
   verbose: true,
   moduleFileExtensions: ["ts", "js"],
-}
+  testMatch: ["**/*.spec.ts"],
+};
