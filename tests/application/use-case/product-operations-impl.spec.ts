@@ -1,8 +1,12 @@
 import { ProductOperationsImpl } from "../../../src/application/use-cases/product-operations-impl";
 import { ProductRepository } from "../../../src/application/protocols/database/product-repository";
 import { Product } from "../../../src/domain/entities";
-import { ProductNotFound } from "../../../src/application/errors";
+import {
+  ProductNotFound,
+  ProductWithSales,
+} from "../../../src/application/errors";
 import { SupplierRepository } from "../../../src/application/protocols/database/supplier-repository";
+import { SaleRepository } from "../../../src/application/protocols/database";
 
 const spyRepository: jest.Mocked<ProductRepository> = {
   create: jest.fn(),
@@ -18,6 +22,10 @@ const spySupRepository: jest.Mocked<SupplierRepository> = {
   byId: jest.fn(),
 };
 
+const spySaleRepository: jest.Mocked<SaleRepository> = {
+  byProduct: jest.fn(),
+};
+
 const createMockedProduct = () => ({
   id: 1,
   name: "some_name",
@@ -30,9 +38,14 @@ describe("ProductOperationsImpl", () => {
   let sut: ProductOperationsImpl;
 
   beforeEach(() => {
-    sut = new ProductOperationsImpl(spyRepository, spySupRepository);
+    sut = new ProductOperationsImpl(
+      spyRepository,
+      spySupRepository,
+      spySaleRepository,
+    );
 
     spySupRepository.byId.mockResolvedValue({} as never);
+    spySaleRepository.byProduct.mockResolvedValue([]);
   });
 
   describe("create", () => {
@@ -223,6 +236,31 @@ describe("ProductOperationsImpl", () => {
       const promise = sut.updatePartially(1, createMockedProduct());
 
       await expect(promise).rejects.toThrow("Bad things could happen");
+    });
+  });
+
+  describe("delete", () => {
+    it('should call "repository" with correct args', async () => {
+      await sut.delete(1);
+
+      expect(spySaleRepository.byProduct).toHaveBeenCalledWith(1);
+      expect(spyRepository.delete).toHaveBeenCalledWith(1);
+    });
+
+    it("should throw when id is invalid", async () => {
+      spyRepository.byId.mockResolvedValueOnce(null);
+
+      const promise = sut.delete(1);
+
+      await expect(promise).rejects.toBeInstanceOf(ProductNotFound);
+    });
+
+    it("should throw when product has sales", async () => {
+      spySaleRepository.byProduct.mockResolvedValueOnce([{}] as never);
+
+      const promise = sut.delete(1);
+
+      await expect(promise).rejects.toBeInstanceOf(ProductWithSales);
     });
   });
 });
