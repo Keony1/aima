@@ -11,8 +11,10 @@ import {
   TypeOrmSupplier,
 } from "../../../src/infra/typeorm/entities";
 import { Express } from "express";
+import authHelper from "../auth-helper";
 
 let app: Express;
+let token: string;
 describe("API /report", () => {
   let dataSource: DataSource;
   let productsRepository: Repository<TypeOrmProduct>;
@@ -22,6 +24,7 @@ describe("API /report", () => {
   beforeAll(async () => {
     dataSource = await initializeTestDataSource();
     app = createTestApp(dataSource);
+    token = await authHelper(app);
 
     productsRepository = dataSource.getRepository(TypeOrmProduct);
     salesRepository = dataSource.getRepository(TypeOrmSale);
@@ -59,7 +62,10 @@ describe("API /report", () => {
   });
 
   it("should return high demand products", async () => {
-    const res = await request(app).get("/api/report");
+    const res = await request(app)
+      .get("/api/report")
+      .set("Authorization", `Bearer ${token}`);
+
     expect(res.status).toBe(200);
     expect(res.body).toStrictEqual({
       data: [

@@ -14,7 +14,8 @@ export async function initializeTestDataSource(): Promise<DataSource> {
 
 export async function destroyTestDatabase(ds: DataSource): Promise<void> {
   await ds.query(`
-       DROP TABLE IF EXISTS "sales", "products", "suppliers", "migrations", "typeorm_metadata" CASCADE;
-     `);
+       DROP TABLE IF EXISTS "sales", "products", "suppliers", "users", "migrations", "typeorm_metadata" CASCADE;
+  `);
+
   await ds.destroy();
 }
