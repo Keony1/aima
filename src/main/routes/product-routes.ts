@@ -15,7 +15,8 @@ import {
   getOneValidator,
   patchValidator,
   updateValidator,
-} from "../middlewares/validators";
+} from "../middlewares/validators/product-validators";
+import { auth } from "../middlewares/auth";
 
 export function productRouter(conn: DataSource): Router {
   const productRepo = new TypeOrmProductsRepository(
@@ -34,26 +35,30 @@ export function productRouter(conn: DataSource): Router {
   const controller = new ProductController(operations);
 
   const productRouter = express.Router();
-  productRouter.post("/products", controller.create.bind(controller));
-  productRouter.get("/products", controller.getAll.bind(controller));
+  productRouter.get("/products", auth, controller.getAll.bind(controller));
+  productRouter.post("/products", auth, controller.create.bind(controller));
   productRouter.get(
     "/products/:id",
+    auth,
     getOneValidator,
     controller.getOne.bind(controller),
   );
   productRouter.patch(
     "/products/:id",
+    auth,
     patchValidator,
     controller.patch.bind(controller),
   );
   productRouter.put(
     "/products/:id",
+    auth,
     updateValidator,
     controller.update.bind(controller),
   );
 
   productRouter.delete(
     "/products/:id",
+    auth,
     deleteValidator,
     controller.delete.bind(controller),
   );

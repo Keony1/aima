@@ -4,6 +4,8 @@ TypeOrmConnection.getInstance()
   .getDataSource()
   .initialize()
   .then(async (ds) => {
+    await ds.runMigrations();
+
     const { createApp } = await import("./config/app");
     const app = createApp(ds);
     app.listen(3000, () =>

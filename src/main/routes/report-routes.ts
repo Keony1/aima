@@ -4,6 +4,7 @@ import { ReportController } from "../controllers/report-controller";
 import { ReportImpl } from "../../application/use-cases/report-impl";
 import { TypeOrmReportRepository } from "../../infra/typeorm/repositories/typeorm-report-repository";
 import { TypeOrmProductReportView } from "../../infra/typeorm/entities/product-report-view";
+import { auth } from "../middlewares/auth";
 
 export function reportRouter(conn: DataSource): Router {
   const typeOrmRepo = new TypeOrmReportRepository(
@@ -14,7 +15,7 @@ export function reportRouter(conn: DataSource): Router {
   const controller = new ReportController(reporter);
 
   const router = express.Router();
-  router.get("/report", controller.getAll.bind(controller));
+  router.get("/report", auth, controller.getAll.bind(controller));
 
   return router;
 }
