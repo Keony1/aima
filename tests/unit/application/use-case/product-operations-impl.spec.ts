@@ -24,6 +24,7 @@ const spySupRepository: jest.Mocked<SupplierRepository> = {
 
 const spySaleRepository: jest.Mocked<SaleRepository> = {
   byProduct: jest.fn(),
+  registerSale: jest.fn(),
 };
 
 const createMockedProduct = () => ({
