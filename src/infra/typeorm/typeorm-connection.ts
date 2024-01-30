@@ -1,4 +1,5 @@
 import { DataSource, DataSourceOptions } from "typeorm";
+import { SeederOptions } from "typeorm-extension";
 
 export class TypeOrmConnection {
   private static instance?: TypeOrmConnection;
@@ -25,6 +26,7 @@ export class TypeOrmConnection {
         password: "postgres",
         entities: [__dirname + "/entities/*.{js,ts}"],
         migrations: [__dirname + "/migrations/*.{js,ts}"],
+        seeds: [__dirname + "/seeds/*-seeder.{js,ts}"],
         logging: true,
       };
 
