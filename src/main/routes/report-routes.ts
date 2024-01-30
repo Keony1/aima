@@ -1,15 +1,11 @@
 import express, { Router } from "express";
-import { DataSource } from "typeorm";
 import { ReportController } from "../controllers/report-controller";
 import { ReportImpl } from "../../application/use-cases/report-impl";
 import { TypeOrmReportRepository } from "../../infra/typeorm/repositories/typeorm-report-repository";
-import { TypeOrmProductReportView } from "../../infra/typeorm/entities/product-report-view";
 import { auth } from "../middlewares/auth";
 
-export function reportRouter(conn: DataSource): Router {
-  const typeOrmRepo = new TypeOrmReportRepository(
-    conn.getRepository(TypeOrmProductReportView),
-  );
+export default function (): Router {
+  const typeOrmRepo = new TypeOrmReportRepository();
 
   const reporter = new ReportImpl(typeOrmRepo);
   const controller = new ReportController(reporter);

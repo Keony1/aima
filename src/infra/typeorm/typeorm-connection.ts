@@ -14,6 +14,7 @@ export class TypeOrmConnection {
   }
 
   getDataSource(opts?: Partial<DataSourceOptions>): DataSource {
+    if (this.datasource) return this.datasource;
     try {
       let defaults: DataSourceOptions & SeederOptions = {
         type: "postgres",

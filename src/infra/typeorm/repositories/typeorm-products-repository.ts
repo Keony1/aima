@@ -2,9 +2,15 @@ import { Equal, Repository } from "typeorm";
 import { TypeOrmProduct } from "../entities";
 import { ProductRepository } from "../../../application/protocols/database/product-repository";
 import { Product } from "../../../domain/entities";
+import { TypeOrmConnection } from "../typeorm-connection";
 
 export class TypeOrmProductsRepository implements ProductRepository {
-  constructor(private readonly productRepository: Repository<TypeOrmProduct>) {}
+  private readonly productRepository: Repository<TypeOrmProduct>;
+  constructor() {
+    this.productRepository = TypeOrmConnection.getInstance()
+      .getDataSource()
+      .getRepository(TypeOrmProduct);
+  }
   async create(data: Product): Promise<Product> {
     return await this.productRepository.save(data);
   }

@@ -1,17 +1,16 @@
 import express, { json, Express } from "express";
-import { DataSource } from "typeorm";
 
-import { productRouter } from "../routes/product-routes";
-import { reportRouter } from "../routes/report-routes";
-import { loginRouter } from "../routes/login-routes";
-import { salesRouter } from "../routes/sales-routes";
+import productRoutes from "../routes/product-routes";
+import reportRoutes from "../routes/report-routes";
+import loginRoutes from "../routes/login-routes";
+import salesRoutes from "../routes/sales-routes";
 
-function createApp(dataSource: DataSource): Express {
+function createApp(): Express {
   const router = express.Router();
-  router.use(loginRouter(dataSource));
-  router.use(productRouter(dataSource));
-  router.use(reportRouter(dataSource));
-  router.use(salesRouter(dataSource));
+  router.use(loginRoutes());
+  router.use(productRoutes());
+  router.use(reportRoutes());
+  router.use(salesRoutes());
 
   const app = express();
   app.use(json());

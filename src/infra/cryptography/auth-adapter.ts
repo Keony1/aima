@@ -3,9 +3,15 @@ import crypto from "crypto";
 
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { TypeOrmUser } from "../typeorm/entities/user";
+import { TypeOrmConnection } from "../typeorm/typeorm-connection";
 
 export class Authenticator {
-  constructor(private readonly userRepository: Repository<TypeOrmUser>) {}
+  private readonly userRepository: Repository<TypeOrmUser>;
+  constructor() {
+    this.userRepository = TypeOrmConnection.getInstance()
+      .getDataSource()
+      .getRepository(TypeOrmUser);
+  }
 
   async doAuth(username: string, password: string): Promise<string> {
     const user = await this.userRepository.findOne({

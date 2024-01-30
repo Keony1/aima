@@ -10,7 +10,7 @@ TypeOrmConnection.getInstance()
     await runSeeder(ds, InitialSeed);
 
     const { createApp } = await import("./config/app");
-    const app = createApp(ds);
+    const app = createApp();
     app.listen(3000, () =>
       console.log(`Server running at http://localhost:3000`),
     );

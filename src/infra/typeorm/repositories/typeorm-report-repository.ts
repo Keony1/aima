@@ -5,11 +5,17 @@ import {
   RestockingNeeds,
 } from "../../../domain/entities/product-report";
 import { TypeOrmProductReportView } from "../entities/product-report-view";
+import { TypeOrmConnection } from "../typeorm-connection";
 
 export class TypeOrmReportRepository implements ReportRepository {
-  constructor(
-    private readonly repository: Repository<TypeOrmProductReportView>,
-  ) {}
+  private readonly repository: Repository<TypeOrmProductReportView>;
+
+  constructor() {
+    this.repository = TypeOrmConnection.getInstance()
+      .getDataSource()
+      .getRepository(TypeOrmProductReportView);
+  }
+
   async summary(demand?: RestockingNeeds): Promise<ProductReport[]> {
     return this.repository.find({ where: { restockingNeeds: demand } });
   }
