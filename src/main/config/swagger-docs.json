@@ -19,6 +19,10 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/Login"
+              },
+              "example": {
+                "username": "user",
+                "password": "pass"
               }
             }
           }
@@ -33,6 +37,9 @@
                   "properties": {
                     "accessToken": {
                       "type": "string"
+                    },
+                    "expiresIn": {
+                      "type": "integer"
                     }
                   }
                 }
