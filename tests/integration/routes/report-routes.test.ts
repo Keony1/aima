@@ -23,7 +23,7 @@ describe("API /report", () => {
 
   beforeAll(async () => {
     dataSource = await initializeTestDataSource();
-    app = createTestApp(dataSource);
+    app = createTestApp();
     token = await authHelper(app);
 
     productsRepository = dataSource.getRepository(TypeOrmProduct);
@@ -58,7 +58,7 @@ describe("API /report", () => {
   });
 
   afterAll(async () => {
-    await destroyTestDatabase(dataSource);
+    await destroyTestDatabase();
   });
 
   it("should return high demand products", async () => {

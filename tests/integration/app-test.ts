@@ -1,13 +1,12 @@
 import express, { json } from "express";
-import { DataSource } from "typeorm";
 import { reportRouter } from "../../src/main/routes/report-routes";
 import { loginRouter } from "../../src/main/routes/login-routes";
 
-function createTestApp(conn: DataSource) {
+function createTestApp() {
   const router = express.Router();
-  const reportRoutes = reportRouter(conn);
+  const reportRoutes = reportRouter();
   router.use(reportRoutes);
-  router.use(loginRouter(conn));
+  router.use(loginRouter());
 
   const app = express();
   app.use(json());
