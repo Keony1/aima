@@ -3,13 +3,15 @@
   "version": "0.0.0",
   "description": "Advanced Inventory Management API",
   "scripts": {
-    "build": "npx tsc",
-    "start": "node dist/src/main/index.js",
+    "build": "rimraf ./build && npx tsc",
+    "start": "node build/src/main/index.js",
     "dev": "nodemon src/main/index.ts",
     "test": "jest --passWithNoTests --no-cache --runInBand",
     "test:unit": "npm t -- --watch",
     "test:integration": "npm t -- --config ./jest.integration.config.js",
-    "typeorm": "typeorm-ts-node-commonjs"
+    "typeorm": "typeorm-ts-node-commonjs",
+    "compose:dev": "docker compose -f docker-compose.dev.yml -p aima-dev up",
+    "compose": "docker compose up"
   },
   "author": "Keony Willian Schröer",
   "license": "ISC",
@@ -38,6 +40,7 @@
     "eslint-plugin-promise": "^6.1.1",
     "jest": "^29.7.0",
     "nodemon": "^3.0.3",
+    "rimraf": "^5.0.5",
     "supertest": "^6.3.4",
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",

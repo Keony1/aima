@@ -3,7 +3,7 @@ import { TypeOrmConnection } from "../../src/infra/typeorm/typeorm-connection";
 
 export async function initializeTestDataSource(): Promise<DataSource> {
   const conn = TypeOrmConnection.getInstance().getDataSource({
-    database: "aima-test",
+    database: process.env.TEST_DB_NAME,
   });
 
   await conn.initialize();

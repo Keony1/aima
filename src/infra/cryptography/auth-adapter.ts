@@ -19,16 +19,16 @@ export class Authenticator {
       throw new Error("User not found");
     }
 
-    const token = jwt.sign(user.username, "accelerator");
+    const token = jwt.sign(user.username, process.env.APP_SECRET as string);
     return token;
   }
 
   static verify(token: string): string | JwtPayload {
-    return jwt.verify(token, "accelerator");
+    return jwt.verify(token, process.env.APP_SECRET as string);
   }
 
   private encode(text: string): string {
-    const salt = "salt";
+    const salt = process.env.APP_SALT;
     const hash = crypto.createHash("sha256");
     hash.update(text + salt);
 

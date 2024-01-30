@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:16-alpine
+    user: postgres
+    container_name: db_dev
+    environment:
+      PG_USER: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: aima-dev
+    volumes:
+      - ./initdb:/docker-entrypoint-initdb.d
+      - dev_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - 5432:5432
+
+  api:
+    container_name: api-dev
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DB_HOST=db_dev
+      - DB_NAME=aima-dev
+      - DB_USER=postgres
+      - DB_PASS=postgres
+      - DB_PORT=5432
+      - DB_TEST_NAME=aima-test
+      - APP_SALT=salt
+      - APP_SECRET=accelerator
+    build:
+      context: .
+      target: development
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - 3000:3000
+    command: npm run dev
+
+volumes:
+  initdb:
+    driver: local
+  dev_db_data:
+    driver: local
