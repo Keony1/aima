@@ -25,7 +25,10 @@ export class Authenticator {
       throw new Error("User not found");
     }
 
-    const token = jwt.sign(user.username, process.env.APP_SECRET as string);
+    const token = jwt.sign({ user }, process.env.APP_SECRET as string, {
+      expiresIn: 3600,
+    });
+
     return token;
   }
 

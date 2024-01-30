@@ -10,6 +10,7 @@ export class LoginController {
 
       const token = await this.authenticator.doAuth(username, password);
       res.json({
+        expiresIn: 3600,
         accessToken: token,
       });
     } catch (err: any) {
